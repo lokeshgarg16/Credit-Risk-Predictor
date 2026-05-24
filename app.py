@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 import streamlit as st
-import matplotlib.pyplot as plt
+import plotly.express as px
 
 from src.data_utils import load_data
 from src.predict import predict_single, load_pipeline
@@ -66,14 +66,11 @@ with tab2:
     st.dataframe(df.head(), use_container_width=True)
 
     st.subheader("Target Distribution")
-    target_counts = df[TARGET_COLUMN].value_counts()
-
-    fig, ax = plt.subplots()
-    target_counts.plot(kind="bar", ax=ax)
-    ax.set_xlabel("Credit Risk")
-    ax.set_ylabel("Count")
-    ax.set_title("Class Distribution")
-    st.pyplot(fig)
+    target_counts = df[TARGET_COLUMN].value_counts().reset_index()
+    target_counts.columns = ["Credit Risk", "Count"]
+    
+    fig = px.bar(target_counts, x="Credit Risk", y="Count", title="Class Distribution")
+    st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Summary Statistics")
     st.dataframe(df.describe(include="all").transpose(), use_container_width=True)
